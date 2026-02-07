@@ -7,8 +7,10 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const outfit = Outfit({ subsets: ['latin'], variable: '--font-outfit' })
 
 export const metadata: Metadata = {
-  title: 'After Trials',
-  description: 'Where evidence meets empathy. A social space for doctors.',
+  icons: {
+    icon: '/icon.svg',
+    apple: '/icon.svg', // Fallback to SVG for now
+  },
 }
 
 export default function RootLayout({
