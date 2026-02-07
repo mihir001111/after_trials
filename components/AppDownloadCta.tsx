@@ -5,7 +5,7 @@ export default function AppDownloadCta({
     variant = "floating",
     onClick,
 }: {
-    variant?: "floating" | "header"; // Removed "fixed" and "inline" as they are less used now or can be simplified
+    variant?: "floating" | "header" | "inline";
     onClick?: () => void;
 }) {
     if (variant === "floating") {
@@ -37,6 +37,18 @@ export default function AppDownloadCta({
             >
                 <Download size={12} />
                 <span>Get App</span>
+            </button>
+        );
+    }
+
+    if (variant === "inline") {
+        return (
+            <button
+                onClick={onClick}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-black text-white px-6 py-3 rounded-full hover:bg-gray-800 transition-colors font-medium text-sm"
+            >
+                <Download size={16} />
+                <span>Download for iOS</span>
             </button>
         );
     }
