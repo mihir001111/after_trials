@@ -1,23 +1,19 @@
 
 import { createClient } from '@/utils/supabase/server';
-import { createClient as createBrowserClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { Blog } from '@/types/blog';
 import { ArrowLeft, Calendar, Clock, Share2 } from 'lucide-react';
-import ReactMarkdown from 'react-markdown'; // Or use a HTML renderer if content is HTML
+import ReactMarkdown from 'react-markdown';
 
-// Revalidate every hour
-export const revalidate = 3600;
+// Force dynamic since we are fetching data that might change
+export const dynamic = 'force-dynamic';
 
 // Fetch blog data helper
 async function getBlog(slug: string) {
-    const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = await createClient();
     const { data } = await supabase
         .from('blogs')
         .select(`
@@ -203,21 +199,3 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     );
 }
 
-// Generate static params for common/latest posts (ISR)
-export async function generateStaticParams() {
-    const supabase = createBrowserClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
-
-    const { data: blogs } = await supabase
-        .from('blogs')
-        .select('slug')
-        .eq('published', true)
-        .order('published_at', { ascending: false })
-        .limit(10); // Prerender latest 10
-
-    return blogs?.map(({ slug }) => ({
-        slug,
-    })) || [];
-}
