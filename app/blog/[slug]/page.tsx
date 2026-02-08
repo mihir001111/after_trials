@@ -16,14 +16,7 @@ async function getBlog(slug: string) {
     const supabase = await createClient();
     const { data } = await supabase
         .from('blogs')
-        .select(`
-            *,
-            author:author_id(
-                full_name,
-                avatar_url,
-                username
-            )
-        `)
+        .select('*')
         .eq('slug', slug)
         .eq('published', true)
         .single();
@@ -32,8 +25,9 @@ async function getBlog(slug: string) {
 }
 
 // Generate SEO Metadata
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-    const blog = await getBlog(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const blog = await getBlog(slug);
 
     if (!blog) {
         return {
@@ -51,7 +45,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
             description: blog.seo_description || blog.excerpt || '',
             type: 'article',
             publishedTime: blog.published_at || blog.created_at,
-            authors: [blog.author?.full_name || 'After Trials Team'],
+            authors: ['After Trials Team'],
             images: [
                 {
                     url: ogImage,
@@ -70,8 +64,9 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     };
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-    const blog = await getBlog(params.slug);
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const blog = await getBlog(slug);
 
     if (!blog) {
         notFound();

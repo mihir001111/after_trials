@@ -13,17 +13,10 @@ async function getBlogs(page: number) {
     const start = (page - 1) * POSTS_PER_PAGE;
     const end = start + POSTS_PER_PAGE - 1;
 
-    // Fetch blogs with author details and total count
+    // Fetch blogs without author join (author_id references auth.users which can't be joined)
     const { data, count, error } = await supabase
         .from('blogs')
-        .select(`
-            *,
-            author:author_id(
-                full_name,
-                avatar_url,
-                username
-            )
-        `, { count: 'exact' })
+        .select('*', { count: 'exact' })
         .eq('published', true)
         .order('published_at', { ascending: false })
         .range(start, end);
@@ -40,11 +33,12 @@ async function getBlogs(page: number) {
 }
 
 interface BlogPageProps {
-    searchParams: { page?: string };
+    searchParams: Promise<{ page?: string }>;
 }
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
-    const currentPage = Number(searchParams?.page) || 1;
+    const params = await searchParams;
+    const currentPage = Number(params?.page) || 1;
     const { blogs, total } = await getBlogs(currentPage);
     const totalPages = Math.ceil(total / POSTS_PER_PAGE);
 
