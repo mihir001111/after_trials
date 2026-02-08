@@ -1,18 +1,15 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@/utils/supabase/server';
 import BlogCard from '@/components/BlogCard';
 import InfoPageLayout from '@/components/InfoPageLayout';
 import Pagination from '@/components/Pagination';
 import { Blog } from '@/types/blog';
 
-// Revalidate every hour for fresh content, but capable of being static cached
-export const revalidate = 3600;
+// Force dynamic to always fetch fresh data (like profiles page)
+export const dynamic = 'force-dynamic';
 const POSTS_PER_PAGE = 12;
 
 async function getBlogs(page: number) {
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-    );
+    const supabase = await createClient();
     const start = (page - 1) * POSTS_PER_PAGE;
     const end = start + POSTS_PER_PAGE - 1;
 
