@@ -1,6 +1,7 @@
 export type Blog = {
     id: string;
     created_at: string;
+    updated_at: string;
     slug: string;
     title: string;
     excerpt: string | null;
