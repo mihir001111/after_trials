@@ -9,12 +9,15 @@ import { Blog } from '@/types/blog';
 import { ArrowLeft, Calendar, Clock, Share2 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown'; // Or use a HTML renderer if content is HTML
 
-// Force dynamic to always fetch fresh data (like profiles page)
-export const dynamic = 'force-dynamic';
+// Revalidate every hour
+export const revalidate = 3600;
 
 // Fetch blog data helper
 async function getBlog(slug: string) {
-    const supabase = await createClient();
+    const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
     const { data } = await supabase
         .from('blogs')
         .select(`

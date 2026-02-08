@@ -66,3 +66,8 @@ with check ( bucket_id = 'blog-images' and auth.uid() = owner );
 create policy "Authenticated users can delete their own blog images"
 on storage.objects for delete
 using ( bucket_id = 'blog-images' and auth.uid() = owner );
+
+-- GRANT PERMISSIONS (Explicitly allow public access)
+-- alter publication supabase_realtime add table public.blogs; -- User requested removal
+grant select on table public.blogs to anon, authenticated, service_role;
+grant usage on sequence public.blogs_id_seq to anon, authenticated, service_role; -- If sequence exists (uuid uses gen_random_uuid so maybe not needed but safe)
