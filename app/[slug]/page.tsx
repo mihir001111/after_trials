@@ -21,32 +21,34 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
     if (profile) {
         // --- PROFILE LOGIC ---
-        // Fetch Posts
-        const { data: postsData } = await supabase
-            .from('evidence_posts')
-            .select('*')
-            .eq('author_id', profile.id)
-            .order('created_at', { ascending: false });
-
-        // Fetch Latest/Pinned Canvas (need Title for link now!)
-        const { data: latestCanvas } = await supabase
-            .from('canvases')
-            .select('id, title')
-            .eq('author_id', profile.id)
-            .order('created_at', { ascending: false })
-            .limit(1)
-            .single();
-
-        // Fetch Counts
-        const { count: followersCount } = await supabase
-            .from('followers')
-            .select('*', { count: 'exact', head: true })
-            .eq('following_id', profile.id);
-
-        const { count: followingCount } = await supabase
-            .from('followers')
-            .select('*', { count: 'exact', head: true })
-            .eq('follower_id', profile.id);
+        // Fetch Posts, Latest Canvas, and Follower Counts in parallel
+        const [
+            { data: postsData },
+            { data: latestCanvas },
+            { count: followersCount },
+            { count: followingCount }
+        ] = await Promise.all([
+            supabase
+                .from('evidence_posts')
+                .select('*')
+                .eq('author_id', profile.id)
+                .order('created_at', { ascending: false }),
+            supabase
+                .from('canvases')
+                .select('id, title')
+                .eq('author_id', profile.id)
+                .order('created_at', { ascending: false })
+                .limit(1)
+                .single(),
+            supabase
+                .from('followers')
+                .select('*', { count: 'exact', head: true })
+                .eq('following_id', profile.id),
+            supabase
+                .from('followers')
+                .select('*', { count: 'exact', head: true })
+                .eq('follower_id', profile.id)
+        ]);
 
         const uiProfile = {
             ...profile,
@@ -118,15 +120,19 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
     if (!author) return notFound();
 
-    const { count: followersCount } = await supabase
-        .from('followers')
-        .select('*', { count: 'exact', head: true })
-        .eq('following_id', author.id);
-
-    const { count: followingCount } = await supabase
-        .from('followers')
-        .select('*', { count: 'exact', head: true })
-        .eq('follower_id', author.id);
+    const [
+        { count: followersCount },
+        { count: followingCount }
+    ] = await Promise.all([
+        supabase
+            .from('followers')
+            .select('*', { count: 'exact', head: true })
+            .eq('following_id', author.id),
+        supabase
+            .from('followers')
+            .select('*', { count: 'exact', head: true })
+            .eq('follower_id', author.id)
+    ]);
 
     const uiCanvas = {
         ...canvas,

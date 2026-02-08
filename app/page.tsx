@@ -644,27 +644,22 @@ export default function Home() {
                   </motion.p>
 
                   <motion.h2
-                    className="text-3xl md:text-5xl font-light text-center mb-12"
+                    className="text-2xl sm:text-3xl md:text-5xl font-light text-center mb-8 sm:mb-12"
                   >
                     Find your <span className="gradient-text font-bold">Peers</span>.
                   </motion.h2>
 
-
-
-
-
-
                   {/* Search Mockup */}
                   <motion.div
-                    className="w-full max-w-lg mb-12 relative z-10"
+                    className="w-full max-w-lg mb-8 sm:mb-12 relative z-10"
                   >
                     <div className="relative group">
                       <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-orange-600 rounded-full opacity-20 group-hover:opacity-40 blur transition duration-500" />
-                      <div className="relative bg-white rounded-full shadow-lg flex items-center p-2 pr-4 ring-1 ring-black/5">
-                        <div className="p-3 text-gray-400">
+                      <div className="relative bg-white rounded-full shadow-lg flex items-center p-1.5 sm:p-2 sm:pr-4 ring-1 ring-black/5">
+                        <div className="p-2 sm:p-3 text-gray-400">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-6 w-6"
+                            className="h-5 w-5 sm:h-6 sm:w-6"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -686,15 +681,15 @@ export default function Home() {
                               setIsSearching(true); // Immediate feedback
                             }
                           }}
-                          placeholder="Search doctors, peers, or..."
-                          className="flex-1 bg-transparent outline-none text-base md:text-lg placeholder:text-gray-300 font-light text-black"
+                          placeholder="Search doctors..."
+                          className="flex-1 bg-transparent outline-none text-sm sm:text-base md:text-lg placeholder:text-gray-300 font-light text-black min-w-0"
                         />
                         <button
                           onClick={() => handleSearch(searchQuery)}
                           disabled={isSearching}
-                          className="bg-black text-white px-6 py-2 rounded-full text-sm font-medium tracking-wide hover:bg-gray-900 transition-colors disabled:opacity-80 flex items-center justify-center min-w-[100px]"
+                          className="bg-black text-white px-4 sm:px-6 py-2 rounded-full text-xs sm:text-sm font-medium tracking-wide hover:bg-gray-900 transition-colors disabled:opacity-80 flex items-center justify-center min-w-[80px] sm:min-w-[100px]"
                         >
-                          {isSearching ? <Loader2 className="animate-spin w-4 h-4" /> : "SEARCH"}
+                          {isSearching ? <Loader2 className="animate-spin w-3 h-3 sm:w-4 sm:h-4" /> : "SEARCH"}
                         </button>
                       </div>
                     </div>
@@ -702,16 +697,16 @@ export default function Home() {
 
                   {/* Results / Avatars */}
                   <motion.div
-                    className="flex flex-wrap justify-center gap-6 md:gap-10 min-h-[120px]"
+                    className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-10 min-h-[120px]"
                   >
                     {isSearching ? (
                       // Skeleton Loading State
                       [1, 2, 3].map((i) => (
                         <div key={i} className="flex flex-col items-center gap-3 animate-pulse">
-                          <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gray-200" />
+                          <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-gray-200" />
                           <div className="space-y-2 w-full flex flex-col items-center">
-                            <div className="h-3 w-16 bg-gray-200 rounded" />
-                            <div className="h-2 w-10 bg-gray-200 rounded" />
+                            <div className="h-2 sm:h-3 w-12 sm:w-16 bg-gray-200 rounded" />
+                            <div className="h-1.5 sm:h-2 w-8 sm:w-10 bg-gray-200 rounded" />
                           </div>
                         </div>
                       ))
@@ -719,7 +714,7 @@ export default function Home() {
                       searchResults.map((doctor) => (
                         <Link href={`/${doctor.username}`} key={doctor.id}>
                           <div className="flex flex-col items-center gap-3 group cursor-pointer">
-                            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gray-100 overflow-hidden relative shadow-md group-hover:shadow-xl transition-all duration-300 ring-2 ring-transparent group-hover:ring-purple-500 ring-offset-2">
+                            <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-gray-100 overflow-hidden relative shadow-md group-hover:shadow-xl transition-all duration-300 ring-2 ring-transparent group-hover:ring-purple-500 ring-offset-2">
                               {doctor.avatar_url ? (
                                 <Image
                                   src={doctor.avatar_url}
@@ -737,7 +732,7 @@ export default function Home() {
                               <p className="text-xs font-semibold text-black">
                                 {doctor.full_name}
                               </p>
-                              <p className="text-[10px] text-gray-500 uppercase tracking-wide">
+                              <p className="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-wide">
                                 {doctor.specialization || "Doctor"}
                               </p>
                             </div>
@@ -745,7 +740,7 @@ export default function Home() {
                         </Link>
                       ))
                     ) : searchQuery.trim() !== "" ? (
-                      <div className="text-gray-400 font-light italic">No professionals found.</div>
+                      <div className="text-gray-400 font-light italic text-sm">No professionals found.</div>
                     ) : null}
                   </motion.div>
                 </motion.div>

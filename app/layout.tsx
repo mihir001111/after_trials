@@ -23,15 +23,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={clsx(inter.className, outfit.variable, "antialiased")}>
         <NextTopLoader
-          color="#000000"
+          color="#7C3AED"
           initialPosition={0.08}
           crawlSpeed={200}
           height={3}
           crawl={true}
-          showSpinner={false}
+          showSpinner={true}
           easing="ease"
           speed={200}
-          shadow="0 0 10px #000000,0 0 5px #000000"
+          shadow="0 0 10px #7C3AED,0 0 5px #7C3AED"
         />
         {children}
       </body>
