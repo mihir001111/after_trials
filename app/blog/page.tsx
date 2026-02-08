@@ -1,17 +1,20 @@
 import { createClient } from '@/utils/supabase/server';
 import BlogCard from '@/components/BlogCard';
 import InfoPageLayout from '@/components/InfoPageLayout';
+import Pagination from '@/components/Pagination';
 import { Blog } from '@/types/blog';
 
 // Revalidate every hour for fresh content, but capable of being static cached
 export const revalidate = 3600;
+const POSTS_PER_PAGE = 12;
 
-async function getBlogs() {
+async function getBlogs(page: number) {
     const supabase = await createClient();
+    const start = (page - 1) * POSTS_PER_PAGE;
+    const end = start + POSTS_PER_PAGE - 1;
 
-    // Fetch blogs with author details
-    // Only published blogs
-    const { data, error } = await supabase
+    // Fetch blogs with author details and total count
+    const { data, count, error } = await supabase
         .from('blogs')
         .select(`
             *,
@@ -20,20 +23,30 @@ async function getBlogs() {
                 avatar_url,
                 username
             )
-        `)
+        `, { count: 'exact' })
         .eq('published', true)
-        .order('published_at', { ascending: false });
+        .order('published_at', { ascending: false })
+        .range(start, end);
 
     if (error) {
         console.error('Error fetching blogs:', error);
-        return [];
+        return { blogs: [], total: 0 };
     }
 
-    return (data as unknown as Blog[]) || [];
+    return {
+        blogs: (data as unknown as Blog[]) || [],
+        total: count || 0
+    };
 }
 
-export default async function BlogPage() {
-    const blogs = await getBlogs();
+interface BlogPageProps {
+    searchParams: { page?: string };
+}
+
+export default async function BlogPage({ searchParams }: BlogPageProps) {
+    const currentPage = Number(searchParams?.page) || 1;
+    const { blogs, total } = await getBlogs(currentPage);
+    const totalPages = Math.ceil(total / POSTS_PER_PAGE);
 
     return (
         <InfoPageLayout title="Insights & Updates" showContact={false}>
@@ -44,11 +57,21 @@ export default async function BlogPage() {
             </div>
 
             {blogs.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {blogs.map((blog) => (
-                        <BlogCard key={blog.id} blog={blog} />
-                    ))}
-                </div>
+                <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {blogs.map((blog) => (
+                            <BlogCard key={blog.id} blog={blog} />
+                        ))}
+                    </div>
+
+                    {totalPages > 1 && (
+                        <Pagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            baseUrl="/blog"
+                        />
+                    )}
+                </>
             ) : (
                 <div className="py-20 text-center bg-gray-50 rounded-3xl border border-dashed border-gray-200">
                     <p className="text-gray-500 font-medium">New articles coming soon.</p>
