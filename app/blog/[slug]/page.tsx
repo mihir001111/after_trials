@@ -1,5 +1,6 @@
 
 import { createClient } from '@/utils/supabase/server';
+import { createClient as createBrowserClient } from '@supabase/supabase-js';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -180,11 +181,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                 )}
 
                 {/* Content Body */}
-                <div className="prose prose-lg md:prose-xl prose-neutral max-w-none mx-auto">
-                    {/* Render content safely. If Markdown, use ReactMarkdown. If HTML, verify safety or use dangerous (since trusted internal users edit blogs) */}
-                    {/* For now assuming Markdown or plain text. If HTML is stored, use dangerouslySetInnerHTML */}
-                    <div dangerouslySetInnerHTML={{ __html: blog.content || '' }} />
-                </div>
+                <article className="prose prose-lg md:prose-xl prose-neutral max-w-none mx-auto">
+                    <ReactMarkdown>{blog.content || ''}</ReactMarkdown>
+                </article>
 
                 {/* Tags */}
                 {blog.tags && blog.tags.length > 0 && (
@@ -203,7 +202,11 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
 // Generate static params for common/latest posts (ISR)
 export async function generateStaticParams() {
-    const supabase = await createClient();
+    const supabase = createBrowserClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+
     const { data: blogs } = await supabase
         .from('blogs')
         .select('slug')
