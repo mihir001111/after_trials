@@ -40,5 +40,29 @@ on public.blogs for all
 using ( auth.uid() = author_id );
 
 -- Create an index on slug for fast lookups
-create index if not exists blogs_slug_idx on public.blogs (slug);
 create index if not exists blogs_published_at_idx on public.blogs (published_at desc);
+
+-- STORAGE BUCKET CONFIGURATION
+-- 1. Create the bucket 'blog-images' if it doesn't exist
+insert into storage.buckets (id, name, public)
+values ('blog-images', 'blog-images', true)
+on conflict (id) do nothing;
+
+-- 2. Allow public access to view images
+create policy "Public Access to Blog Images"
+on storage.objects for select
+using ( bucket_id = 'blog-images' );
+
+-- 3. Allow authenticated users (authors) to upload/update/delete images
+create policy "Authenticated users can upload blog images"
+on storage.objects for insert
+with check ( bucket_id = 'blog-images' and auth.role() = 'authenticated' );
+
+create policy "Authenticated users can update their own blog images"
+on storage.objects for update
+using ( bucket_id = 'blog-images' and auth.uid() = owner )
+with check ( bucket_id = 'blog-images' and auth.uid() = owner );
+
+create policy "Authenticated users can delete their own blog images"
+on storage.objects for delete
+using ( bucket_id = 'blog-images' and auth.uid() = owner );
