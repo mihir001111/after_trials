@@ -17,8 +17,8 @@ export default function ContactPage() {
                     <p className="text-gray-600 mb-6">
                         For general questions about the platform, press, or partnerships.
                     </p>
-                    <a href="mailto:team@zenethe.com" className="font-semibold text-blue-600 hover:underline">
-                        team@zenethe.com
+                    <a href="mailto:team@aftertrials.com" className="font-semibold text-blue-600 hover:underline">
+                        team@aftertrials.com
                     </a>
                 </div>
 
@@ -30,8 +30,8 @@ export default function ContactPage() {
                     <p className="text-gray-600 mb-6">
                         Need help with your account or verification? Our support team is ready.
                     </p>
-                    <a href="mailto:support@zenethe.com" className="font-semibold text-purple-600 hover:underline">
-                        support@zenethe.com
+                    <a href="mailto:support@aftertrials.com" className="font-semibold text-purple-600 hover:underline">
+                        support@aftertrials.com
                     </a>
                 </div>
             </div>

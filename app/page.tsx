@@ -1326,7 +1326,7 @@ export default function Home() {
                 whileInView={{ opacity: 1 }}
                 transition={{ delay: 0.8 }}
               >
-                <span>© 2024 After Trials</span>
+                <span>© 2026 After Trials</span>
                 <div className="flex gap-6">
                   <Link href="/privacy" className="cursor-pointer hover:text-black transition-colors">Privacy</Link>
                   <Link href="/terms" className="cursor-pointer hover:text-black transition-colors">Terms</Link>
