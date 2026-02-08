@@ -201,8 +201,15 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                         </div>
                     )}
 
-                    {/* Content Body */}
-                    <MarkdownRenderer content={blog.content || ''} />
+                    {/* Content Body - HTML takes priority over Markdown */}
+                    {blog.html_content ? (
+                        <article
+                            className="prose prose-lg md:prose-xl prose-neutral max-w-none"
+                            dangerouslySetInnerHTML={{ __html: blog.html_content }}
+                        />
+                    ) : (
+                        <MarkdownRenderer content={blog.content || ''} />
+                    )}
 
                     {/* Bottom Tags and Share */}
                     <div className="mt-16 pt-8 border-t border-gray-100">

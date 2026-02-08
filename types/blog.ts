@@ -6,6 +6,7 @@ export type Blog = {
     title: string;
     excerpt: string | null;
     content: string | null;
+    html_content: string | null; // Raw HTML (takes priority over markdown content)
     cover_image: string | null;
     author_id: string | null;
     published: boolean;

@@ -7,7 +7,8 @@ create table if not exists public.blogs (
     slug text not null unique,
     title text not null,
     excerpt text,
-    content text, -- Markdown or HTML content
+    content text, -- Markdown content
+    html_content text, -- Raw HTML content (takes priority over content if present)
     cover_image text,
     
     author_id uuid references auth.users(id) on delete set null,
