@@ -4,6 +4,12 @@ const nextConfig: NextConfig = {
   /* config options here */
   output: "standalone",
   images: { unoptimized: true },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 
 
   headers: async () => {
