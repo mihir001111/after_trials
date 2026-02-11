@@ -1,12 +1,29 @@
 import { MetadataRoute } from 'next';
 import { createClient } from '@supabase/supabase-js';
 
+// Force dynamic generation - ensures fresh data from Supabase on each request
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const BASE_URL = 'https://aftertrials.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const supabase = createClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        {
+            auth: {
+                persistSession: false,
+            },
+            global: {
+                fetch: (url, options) => {
+                    return fetch(url, {
+                        ...options,
+                        cache: 'no-store',
+                    });
+                },
+            },
+        }
     );
 
     // Fetch all published blogs
@@ -58,6 +75,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             lastModified: new Date(),
             changeFrequency: 'daily',
             priority: 0.9,
+        },
+        // New Policy Pages
+        {
+            url: `${BASE_URL}/cookie`,
+            lastModified: new Date(),
+            changeFrequency: 'yearly',
+            priority: 0.3,
+        },
+        {
+            url: `${BASE_URL}/cancellation`,
+            lastModified: new Date(),
+            changeFrequency: 'yearly',
+            priority: 0.3,
+        },
+        {
+            url: `${BASE_URL}/account-deletion`,
+            lastModified: new Date(),
+            changeFrequency: 'yearly',
+            priority: 0.3,
+        },
+        {
+            url: `${BASE_URL}/refund`,
+            lastModified: new Date(),
+            changeFrequency: 'yearly',
+            priority: 0.3,
+        },
+        {
+            url: `${BASE_URL}/subscription-terms`,
+            lastModified: new Date(),
+            changeFrequency: 'yearly',
+            priority: 0.3,
+        },
+        {
+            url: `${BASE_URL}/medical-disclaimer`,
+            lastModified: new Date(),
+            changeFrequency: 'yearly',
+            priority: 0.3,
         },
         ...blogUrls,
     ];
